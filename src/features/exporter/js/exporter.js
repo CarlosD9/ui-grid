@@ -940,21 +940,28 @@
               fileName
             );
           }
-
+          
           //html5 A[download]
           if ('download' in a) {
             var blob = new Blob(
               [exporterOlderExcelCompatibility ? "\uFEFF" : '', csvContent],
               { type: strMimeType }
             );
-            rawFile = URL.createObjectURL(blob);
+            var reader = new FileReader();
+            reader.readAsDataURL(blob);
+
+            reader.onloadend = function () {
+              a.href = reader.result;
+            }
+            //rawFile = URL.createObjectURL(blob);
             a.setAttribute('download', fileName);
           } else {
             rawFile = 'data:' + strMimeType + ',' + encodeURIComponent(csvContent);
             a.setAttribute('target', '_blank');
+            a.href = rawFile;
           }
 
-          a.href = rawFile;
+          //a.href = rawFile;
           a.setAttribute('style', 'display:none;');
           D.body.appendChild(a);
           setTimeout(function() {
